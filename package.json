@@ -1,0 +1,12 @@
+{
+  "name": "nougit-code-challenge-backend",
+  "version": "1.0.0",
+  "description": "A GraphQL API made as part of a code challenge for NouGit",
+  "main": "index.js",
+  "author": "Przemyslaw Dabrowski",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.9.12",
+    "graphql": "^14.5.8"
+  }
+}
