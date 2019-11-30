@@ -22,8 +22,13 @@ const typeDefs = gql`
     pledgeTotal: Float
     pledgeGoal: Float
     pledgerCount: Int
-    # A status of 0 Is Closed, a Status of 1 is open – I'd create a custom type for this if there was more than one data source to validate that it's 0 or 1
+    # A status of 0 Is Closed, a Status of 1 is open – I'd create a custom type for this if the data source was ever going to be written to, just to validate that it's 0 or 1
     status: Int
+  }
+
+  type EntriesResult {
+    entries: [Entry]
+    totalCount: Int
   }
 
   type Author {
@@ -36,13 +41,30 @@ const typeDefs = gql`
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    getEntries: [Entry]
+    getEntries(sortEntriesBy: String, first: Int, offset: Int): EntriesResult
   }
 `;
 
 const resolvers = {
   Query: {
-    getEntries: () => entryData
+    getEntries: (_, __, {first = 5, offset = 0, sortBy = "date"}) => {
+      // Sort the data by whichever sortBy method is chosen
+      const sortedData = entryData.sort((a, b) => b[sortBy] - a[sortBy])
+
+      // Return a totalCount
+      const totalCount = sortedData.length;
+
+      // If first is bypassed, just use the offset
+      const entries = first === undefined ?
+        sortedData.slice(offset) :
+        sortedData.slice(offset, offset + first);
+
+      const result = {
+        entries,
+        totalCount,
+      };
+      return result;
+    },
   }
 };
 
