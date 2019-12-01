@@ -47,11 +47,13 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
+    // I'm choosing to use offset-based pagination;
+    // It's easier to implement considering the data will never change
     getEntries: (_, __, {first = 5, offset = 0, sortBy = "date"}) => {
       // Sort the data by whichever sortBy method is chosen
       const sortedData = entryData.sort((a, b) => b[sortBy] - a[sortBy])
 
-      // Return a totalCount
+      // Return a total of all entries
       const totalCount = sortedData.length;
 
       // If first is bypassed, just use the offset
